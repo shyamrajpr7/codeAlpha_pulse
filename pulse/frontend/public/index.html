@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulse — Social</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --border: #2a2a3a;
+    --accent: #7c6af7;
+    --accent2: #a78bfa;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --danger: #f87171;
+    --success: #34d399;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ── AUTH SCREEN ── */
+  #auth-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #1a1035 0%, var(--bg) 70%);
+  }
+
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  }
+
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .auth-logo h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+
+  .auth-logo p {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin-top: 4px;
+  }
+
+  .auth-tabs {
+    display: flex;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin-bottom: 28px;
+    gap: 4px;
+  }
+
+  .auth-tab {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .auth-tab.active {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .field input, .field textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    outline: none;
+    resize: vertical;
+  }
+
+  .field input:focus, .field textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    width: 100%;
+    padding: 12px;
+  }
+
+  .btn-primary:hover { background: #6b5be6; }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover { color: var(--text); background: var(--surface2); }
+
+  .btn-danger { background: var(--danger); color: white; }
+
+  .error-msg {
+    color: var(--danger);
+    font-size: 0.8rem;
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  /* ── MAIN APP ── */
+  #app { display: none; }
+
+  /* Sidebar */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+  }
+
+  .sidebar-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding: 8px 12px;
+    margin-bottom: 24px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.15s;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 4px;
+  }
+
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+  .nav-item.active { color: var(--accent); background: rgba(124,106,247,0.1); }
+
+  .nav-icon { font-size: 1.1rem; width: 20px; text-align: center; }
+
+  .sidebar-user {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .sidebar-user:hover { background: var(--surface2); }
+
+  .sidebar-user .u-name { font-size: 0.85rem; font-weight: 600; }
+  .sidebar-user .u-handle { font-size: 0.75rem; color: var(--muted); }
+
+  /* Avatar */
+  .avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--surface2);
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    padding: 24px;
+    max-width: 620px;
+    border-right: 1px solid var(--border);
+  }
+
+  /* Right panel */
+  .right-panel {
+    width: 280px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+  }
+
+  /* Page sections */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  /* Post card */
+  .post-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .post-card:hover { border-color: #3a3a50; }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .post-author { flex: 1; }
+  .post-author .name { font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+  .post-author .name:hover { color: var(--accent); }
+  .post-author .time { font-size: 0.75rem; color: var(--muted); }
+
+  .post-content { font-size: 0.95rem; line-height: 1.6; margin-bottom: 14px; white-space: pre-wrap; }
+
+  .post-image {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+    max-height: 300px;
+    object-fit: cover;
+  }
+
+  .post-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .action-btn:hover { color: var(--text); background: var(--surface2); }
+  .action-btn.liked { color: #f472b6; }
+  .action-btn.liked:hover { color: #f472b6; }
+
+  /* Post composer */
+  .composer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .composer-inner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .composer textarea {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 72px;
+  }
+
+  .composer textarea:focus { border-color: var(--accent); }
+
+  .composer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Comment section */
+  .comments-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .comment {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .comment-body {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    flex: 1;
+  }
+
+  .comment-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .comment-author {
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .comment-author:hover { color: var(--accent); }
+  .comment-text { font-size: 0.85rem; }
+  .comment-time { font-size: 0.72rem; color: var(--muted); }
+
+  .comment-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-top: 10px;
+  }
+
+  .comment-input-row input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 8px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .comment-input-row input:focus { border-color: var(--accent); }
+
+  /* Profile page */
+  .profile-banner {
+    background: linear-gradient(135deg, #1a1035, #0f1a35);
+    border-radius: var(--radius);
+    height: 120px;
+    margin-bottom: -40px;
+    border: 1px solid var(--border);
+  }
+
+  .profile-info {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 50px 20px 20px;
+    margin-bottom: 16px;
+  }
+
+  .profile-avatar-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .profile-meta { margin-top: 12px; }
+  .profile-name { font-size: 1.2rem; font-weight: 700; }
+  .profile-handle { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; }
+  .profile-bio { font-size: 0.9rem; color: var(--text); opacity: 0.8; margin-bottom: 14px; }
+
+  .profile-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.1rem; font-weight: 700; }
+  .stat-label { font-size: 0.75rem; color: var(--muted); }
+
+  /* Right panel widgets */
+  .widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .widget-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .suggest-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .suggest-item .info { flex: 1; min-width: 0; }
+  .suggest-item .s-name { font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .suggest-item .s-name:hover { color: var(--accent); }
+  .suggest-item .s-bio { font-size: 0.75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Search */
+  .search-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .search-bar input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-bar input:focus { border-color: var(--accent); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--muted);
+  }
+
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .empty-state h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .empty-state p { font-size: 0.85rem; }
+
+  /* Loading */
+  .loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: var(--muted);
+    gap: 8px;
+    font-size: 0.9rem;
+  }
+
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 0.875rem;
+    z-index: 9999;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Modal */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-bg.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin: 20px;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .modal-title { font-size: 1.1rem; font-weight: 700; }
+
+  .badge {
+    display: inline-block;
+    background: rgba(124,106,247,0.15);
+    color: var(--accent2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .right-panel { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .sidebar { width: 60px; padding: 16px 8px; }
+    .sidebar-logo { font-size: 1.2rem; padding: 8px; }
+    .nav-item span:not(.nav-icon) { display: none; }
+    .sidebar-user .u-name, .sidebar-user .u-handle { display: none; }
+    .main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Auth Screen -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Pulse</h1>
+      <p>Share your world, one post at a time</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Sign in</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Create account</button>
+    </div>
+
+    <!-- Login -->
+    <div id="login-form">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="login-username" placeholder="your_username" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div id="login-error" class="error-msg"></div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="login()">Sign in</button>
+      <p style="text-align:center;margin-top:12px;font-size:0.8rem;color:var(--muted)">
+        Demo: <strong>alice</strong> / <strong>password123</strong>
+      </p>
+    </div>
+
+    <!-- Register -->
+    <div id="register-form" style="display:none">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="reg-username" placeholder="your_username">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="min 6 characters">
+      </div>
+      <div class="field">
+        <label>Bio (optional)</label>
+        <textarea id="reg-bio" rows="2" placeholder="Tell the world about yourself..."></textarea>
+      </div>
+      <div id="reg-error" class="error-msg"></div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="register()">Create account</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="app">
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">Pulse</div>
+      <button class="nav-item active" id="nav-feed" onclick="showPage('feed')">
+        <span class="nav-icon">🏠</span><span>Home</span>
+      </button>
+      <button class="nav-item" id="nav-explore" onclick="showPage('explore')">
+        <span class="nav-icon">🔍</span><span>Explore</span>
+      </button>
+      <button class="nav-item" id="nav-profile" onclick="showMyProfile()">
+        <span class="nav-icon">👤</span><span>Profile</span>
+      </button>
+      <div class="sidebar-user" onclick="showMyProfile()" id="sidebar-user">
+        <img class="avatar" id="sidebar-avatar" width="36" height="36" src="" alt="">
+        <div>
+          <div class="u-name" id="sidebar-uname"></div>
+          <div class="u-handle" id="sidebar-handle"></div>
+        </div>
+      </div>
+      <button class="nav-item" onclick="logout()" style="margin-top:4px">
+        <span class="nav-icon">🚪</span><span>Logout</span>
+      </button>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <!-- Feed page -->
+      <div class="page active" id="page-feed">
+        <div class="page-header">
+          <span class="page-title">Home</span>
+          <span class="badge">Following</span>
+        </div>
+        <div class="composer">
+          <div class="composer-inner">
+            <img class="avatar" id="composer-avatar" width="40" height="40" src="" alt="">
+            <textarea id="post-content" placeholder="What's on your mind?" rows="2"></textarea>
+          </div>
+          <div class="composer-actions">
+            <input id="post-image-url" placeholder="Image URL (optional)" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-size:0.8rem;font-family:inherit;outline:none">
+            <button class="btn btn-primary" style="width:auto;padding:8px 18px" onclick="createPost()">Post</button>
+          </div>
+        </div>
+        <div id="feed-posts"></div>
+      </div>
+
+      <!-- Explore page -->
+      <div class="page" id="page-explore">
+        <div class="page-header">
+          <span class="page-title">Explore</span>
+        </div>
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search users..." oninput="searchUsers(this.value)">
+        </div>
+        <div id="search-results"></div>
+        <div id="explore-posts"></div>
+      </div>
+
+      <!-- Profile page -->
+      <div class="page" id="page-profile">
+        <div id="profile-content"></div>
+      </div>
+    </main>
+
+    <!-- Right panel -->
+    <aside class="right-panel">
+      <div class="widget" id="suggestions-widget">
+        <div class="widget-title">Who to follow</div>
+        <div id="suggestions-list"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Comments Modal -->
+<div class="modal-bg" id="comments-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Comments</span>
+      <button class="btn btn-ghost" onclick="closeComments()" style="padding:6px 10px">✕</button>
+    </div>
+    <div id="modal-comments-list"></div>
+    <div class="comment-input-row" style="margin-top:16px">
+      <input id="modal-comment-input" placeholder="Add a comment…" onkeydown="if(event.key==='Enter')submitComment()">
+      <button class="btn btn-primary" style="width:auto;padding:8px 14px;flex-shrink:0" onclick="submitComment()">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+const API = '';  // Same origin
+let currentUser = null;
+let token = null;
+let activePostId = null;
+
+// ─── UTILS ────────────────────────────────────────────────
+
+function timeAgo(iso) {
+  const diff = (Date.now() - new Date(iso)) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return `${Math.floor(diff/60)}m`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h`;
+  return `${Math.floor(diff/86400)}d`;
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + '/api' + path, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...(opts.headers || {})
+    }
+  });
+  return res.json();
+}
+
+// ─── AUTH ─────────────────────────────────────────────────
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0) === (tab === 'login'));
+  });
+  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+async function login() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  document.getElementById('login-error').textContent = '';
+  if (!username || !password) return document.getElementById('login-error').textContent = 'Fill in all fields';
+  const data = await api('/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) });
+  if (data.error) return document.getElementById('login-error').textContent = data.error;
+  setSession(data.token, data.user);
+}
+
+async function register() {
+  const username = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const bio = document.getElementById('reg-bio').value.trim();
+  document.getElementById('reg-error').textContent = '';
+  if (!username || !email || !password) return document.getElementById('reg-error').textContent = 'Fill in all fields';
+  if (password.length < 6) return document.getElementById('reg-error').textContent = 'Password min 6 chars';
+  const data = await api('/auth/register', { method: 'POST', body: JSON.stringify({ username, email, password, bio }) });
+  if (data.error) return document.getElementById('reg-error').textContent = data.error;
+  setSession(data.token, data.user);
+}
+
+function setSession(t, user) {
+  token = t;
+  currentUser = user;
+  localStorage.setItem('pulse_token', t);
+  localStorage.setItem('pulse_user', JSON.stringify(user));
+  bootApp();
+}
+
+function logout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('pulse_token');
+  localStorage.removeItem('pulse_user');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+// ─── APP BOOT ─────────────────────────────────────────────
+
+function bootApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('sidebar-uname').textContent = currentUser.username;
+  document.getElementById('sidebar-handle').textContent = '@' + currentUser.username;
+  document.getElementById('sidebar-avatar').src = currentUser.avatar;
+  document.getElementById('composer-avatar').src = currentUser.avatar;
+  showPage('feed');
+  loadSuggestions();
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+  if (name === 'feed') loadFeed();
+  if (name === 'explore') loadExplore();
+}
+
+function showMyProfile() {
+  showPage('profile');
+  document.getElementById('nav-profile').classList.add('active');
+  loadProfile(currentUser.username);
+}
+
+// ─── FEED ─────────────────────────────────────────────────
+
+async function loadFeed() {
+  const el = document.getElementById('feed-posts');
+  el.innerHTML = '<div class="loader"><div class="spinner"></div> Loading your feed…</div>';
+  const posts = await api('/posts/feed');
+  if (!posts.length) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">🌱</div><h3>Your feed is empty</h3><p>Follow people to see their posts here</p></div>';
+    return;
+  }
+  el.innerHTML = posts.map(renderPost).join('');
+}
+
+async function loadExplore() {
+  const el = document.getElementById('explore-posts');
+  el.innerHTML = '<div class="loader"><div class="spinner"></div> Loading posts…</div>';
+  const posts = await api('/posts');
+  el.innerHTML = posts.length ? posts.map(renderPost).join('') :
+    '<div class="empty-state"><div class="icon">📭</div><h3>No posts yet</h3><p>Be the first to post!</p></div>';
+}
+
+// ─── POST RENDERING ───────────────────────────────────────
+
+function renderPost(p) {
+  const isOwn = p.authorId === currentUser.id;
+  return `
+  <div class="post-card" id="post-${p._id}">
+    <div class="post-header">
+      <img class="avatar" width="40" height="40" src="${p.author?.avatar || ''}" alt="" onerror="this.src='https://api.dicebear.com/7.x/personas/svg?seed=x'">
+      <div class="post-author">
+        <div class="name" onclick="loadProfile('${p.author?.username}')">${p.author?.username || 'Unknown'}</div>
+        <div class="time">${timeAgo(p.createdAt)}</div>
+      </div>
+      ${isOwn ? `<button class="btn btn-ghost" style="padding:4px 8px;font-size:0.8rem;color:var(--danger)" onclick="deletePost('${p._id}')">🗑</button>` : ''}
+    </div>
+    <div class="post-content">${escapeHtml(p.content)}</div>
+    ${p.image ? `<img src="${p.image}" class="post-image" alt="" onerror="this.style.display='none'">` : ''}
+    <div class="post-actions">
+      <button class="action-btn ${p.liked ? 'liked' : ''}" id="like-btn-${p._id}" onclick="toggleLike('${p._id}', this)">
+        ${p.liked ? '❤️' : '🤍'} <span id="like-count-${p._id}">${p.likesCount}</span>
+      </button>
+      <button class="action-btn" onclick="openComments('${p._id}')">
+        💬 <span>${p.commentsCount}</span>
+      </button>
+    </div>
+  </div>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── POSTS ────────────────────────────────────────────────
+
+async function createPost() {
+  const content = document.getElementById('post-content').value.trim();
+  const image = document.getElementById('post-image-url').value.trim();
+  if (!content) return toast('Write something first!');
+  const post = await api('/posts', { method: 'POST', body: JSON.stringify({ content, image }) });
+  if (post.error) return toast('Error: ' + post.error);
+  document.getElementById('post-content').value = '';
+  document.getElementById('post-image-url').value = '';
+  toast('Posted! 🎉');
+  loadFeed();
+}
+
+async function deletePost(id) {
+  if (!confirm('Delete this post?')) return;
+  await api('/posts/' + id, { method: 'DELETE' });
+  document.getElementById('post-' + id)?.remove();
+  toast('Post deleted');
+}
+
+// ─── LIKES ────────────────────────────────────────────────
+
+async function toggleLike(postId, btn) {
+  const data = await api('/posts/' + postId + '/like', { method: 'POST' });
+  btn.classList.toggle('liked', data.liked);
+  btn.innerHTML = `${data.liked ? '❤️' : '🤍'} <span>${data.count}</span>`;
+}
+
+// ─── COMMENTS ─────────────────────────────────────────────
+
+async function openComments(postId) {
+  activePostId = postId;
+  document.getElementById('comments-modal').classList.add('open');
+  document.getElementById('modal-comment-input').value = '';
+  await loadComments(postId);
+}
+
+function closeComments() {
+  document.getElementById('comments-modal').classList.remove('open');
+  activePostId = null;
+}
+
+async function loadComments(postId) {
+  const el = document.getElementById('modal-comments-list');
+  el.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  const comments = await api('/posts/' + postId + '/comments');
+  if (!comments.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:24px"><div class="icon">💬</div><h3>No comments yet</h3><p>Be the first to comment</p></div>';
+    return;
+  }
+  el.innerHTML = comments.map(c => `
+    <div class="comment" id="comment-${c._id}">
+      <img class="avatar" width="32" height="32" src="${c.author?.avatar || ''}" alt="" onerror="this.src='https://api.dicebear.com/7.x/personas/svg?seed=x'">
+      <div class="comment-body">
+        <div class="comment-meta">
+          <span class="comment-author" onclick="loadProfile('${c.author?.username}');closeComments()">${c.author?.username}</span>
+          <span class="comment-time">${timeAgo(c.createdAt)}</span>
+        </div>
+        <div class="comment-text">${escapeHtml(c.content)}</div>
+      </div>
+      ${c.authorId === currentUser.id ? `<button class="btn btn-ghost" style="padding:4px 6px;font-size:0.75rem;color:var(--danger);align-self:flex-start" onclick="deleteComment('${c._id}')">✕</button>` : ''}
+    </div>
+  `).join('');
+}
+
+async function submitComment() {
+  if (!activePostId) return;
+  const input = document.getElementById('modal-comment-input');
+  const content = input.value.trim();
+  if (!content) return;
+  await api('/posts/' + activePostId + '/comments', { method: 'POST', body: JSON.stringify({ content }) });
+  input.value = '';
+  loadComments(activePostId);
+  // Update comment count in feed
+  const btn = document.querySelector(`[onclick="openComments('${activePostId}')"]`);
+  if (btn) {
+    const span = btn.querySelector('span');
+    if (span) span.textContent = parseInt(span.textContent || 0) + 1;
+  }
+}
+
+async function deleteComment(id) {
+  await api('/comments/' + id, { method: 'DELETE' });
+  document.getElementById('comment-' + id)?.remove();
+  toast('Comment removed');
+}
+
+// ─── PROFILE ──────────────────────────────────────────────
+
+async function loadProfile(username) {
+  showPage('profile');
+  document.getElementById('nav-profile').classList.add('active');
+  const el = document.getElementById('profile-content');
+  el.innerHTML = '<div class="loader"><div class="spinner"></div> Loading profile…</div>';
+  const data = await api('/users/' + username);
+  if (data.error) return el.innerHTML = `<p style="color:var(--danger)">${data.error}</p>`;
+
+  const { user, posts, followers, following, isFollowing } = data;
+  const isOwn = user.id === currentUser.id;
+
+  el.innerHTML = `
+    <div class="profile-banner"></div>
+    <div class="profile-info">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <img class="avatar" width="72" height="72" src="${user.avatar}" alt="" style="border:3px solid var(--bg);margin-top:-36px">
+        ${isOwn
+          ? `<button class="btn btn-outline" onclick="openEditProfile()">Edit profile</button>`
+          : `<button class="btn ${isFollowing ? 'btn-outline' : 'btn-primary'}" id="follow-btn" style="width:auto" onclick="toggleFollow('${user.id}', '${username}')">${isFollowing ? 'Following' : 'Follow'}</button>`
+        }
+      </div>
+      <div class="profile-meta">
+        <div class="profile-name">${user.username}</div>
+        <div class="profile-handle">@${user.username}</div>
+        <div class="profile-bio">${user.bio || 'No bio yet.'}</div>
+        <div class="profile-stats">
+          <div class="stat"><div class="stat-num">${posts.length}</div><div class="stat-label">Posts</div></div>
+          <div class="stat"><div class="stat-num" id="followers-count">${followers}</div><div class="stat-label">Followers</div></div>
+          <div class="stat"><div class="stat-num">${following}</div><div class="stat-label">Following</div></div>
+        </div>
+      </div>
+    </div>
+    ${posts.length
+      ? posts.map(p => renderPost({ ...p, author: { username: user.username, avatar: user.avatar } })).join('')
+      : '<div class="empty-state"><div class="icon">📝</div><h3>No posts yet</h3><p>This user hasn\'t posted anything</p></div>'
+    }
+  `;
+}
+
+async function toggleFollow(userId, username) {
+  const btn = document.getElementById('follow-btn');
+  const data = await api('/follow/' + userId, { method: 'POST' });
+  const nowFollowing = data.followed;
+  btn.textContent = nowFollowing ? 'Following' : 'Follow';
+  btn.className = `btn ${nowFollowing ? 'btn-outline' : 'btn-primary'}`;
+  btn.style.width = 'auto';
+  const fc = document.getElementById('followers-count');
+  if (fc) fc.textContent = parseInt(fc.textContent) + (nowFollowing ? 1 : -1);
+  toast(nowFollowing ? `Following @${username}` : `Unfollowed @${username}`);
+  loadSuggestions();
+}
+
+// ─── EDIT PROFILE ─────────────────────────────────────────
+
+function openEditProfile() {
+  const bio = prompt('Update your bio:', currentUser.bio || '');
+  if (bio === null) return;
+  api('/users/me', { method: 'PUT', body: JSON.stringify({ bio, avatar: currentUser.avatar }) })
+    .then(() => {
+      currentUser.bio = bio;
+      localStorage.setItem('pulse_user', JSON.stringify(currentUser));
+      toast('Profile updated!');
+      loadProfile(currentUser.username);
+    });
+}
+
+// ─── SEARCH ───────────────────────────────────────────────
+
+let searchTimeout;
+async function searchUsers(q) {
+  clearTimeout(searchTimeout);
+  const el = document.getElementById('search-results');
+  if (!q) { el.innerHTML = ''; loadExplore(); return; }
+  searchTimeout = setTimeout(async () => {
+    const users = await api('/users?q=' + encodeURIComponent(q));
+    document.getElementById('explore-posts').innerHTML = '';
+    el.innerHTML = users.length
+      ? users.map(u => `
+        <div class="suggest-item" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px">
+          <img class="avatar" width="44" height="44" src="${u.avatar}" alt="" onerror="this.src='https://api.dicebear.com/7.x/personas/svg?seed=x'">
+          <div class="info">
+            <div class="s-name" onclick="loadProfile('${u.username}')">${u.username}</div>
+            <div class="s-bio">${u.bio || 'No bio'}</div>
+          </div>
+          ${u.id !== currentUser.id ? `<button class="btn btn-outline" style="padding:6px 12px;font-size:0.8rem" onclick="quickFollow('${u.id}','${u.username}',this)">Follow</button>` : '<span class="badge">You</span>'}
+        </div>`).join('')
+      : '<div class="empty-state"><div class="icon">🔍</div><h3>No users found</h3></div>';
+  }, 300);
+}
+
+async function quickFollow(userId, username, btn) {
+  const data = await api('/follow/' + userId, { method: 'POST' });
+  btn.textContent = data.followed ? 'Following' : 'Follow';
+  btn.className = `btn ${data.followed ? 'btn-primary' : 'btn-outline'}`;
+  btn.style.cssText = 'padding:6px 12px;font-size:0.8rem';
+  toast(data.followed ? `Following @${username}` : `Unfollowed @${username}`);
+  loadSuggestions();
+}
+
+// ─── SUGGESTIONS ──────────────────────────────────────────
+
+async function loadSuggestions() {
+  const el = document.getElementById('suggestions-list');
+  const [all, follows] = await Promise.all([api('/users'), api('/posts/feed').then(() => null).catch(() => null)]);
+  const followData = await api('/posts/feed');
+  // Just show users that aren't the current user
+  const others = all.filter(u => u.id !== currentUser.id).slice(0, 5);
+  el.innerHTML = others.length
+    ? others.map(u => `
+      <div class="suggest-item">
+        <img class="avatar" width="36" height="36" src="${u.avatar}" alt="" onerror="this.src='https://api.dicebear.com/7.x/personas/svg?seed=x'">
+        <div class="info">
+          <div class="s-name" onclick="loadProfile('${u.username}')">${u.username}</div>
+          <div class="s-bio">${u.bio || 'No bio'}</div>
+        </div>
+        <button class="btn btn-outline" style="padding:4px 10px;font-size:0.78rem" onclick="quickFollow('${u.id}','${u.username}',this)">Follow</button>
+      </div>`).join('')
+    : '<p style="color:var(--muted);font-size:0.85rem">No suggestions yet</p>';
+}
+
+// ─── SEED DEMO DATA ───────────────────────────────────────
+
+async function seedDemoData() {
+  // Try to create demo users silently
+  const users = [
+    { username: 'alice', email: 'alice@pulse.app', password: 'password123', bio: 'Designer & coffee enthusiast ☕' },
+    { username: 'bob', email: 'bob@pulse.app', password: 'password123', bio: 'Full-stack dev building cool stuff 🛠️' },
+    { username: 'carol', email: 'carol@pulse.app', password: 'password123', bio: 'Photographer | Travel lover 🌍' },
+  ];
+  for (const u of users) {
+    await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(u)
+    }).catch(() => {});
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+
+document.getElementById('comments-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeComments();
+});
+
+// Try restore session
+(async () => {
+  await seedDemoData();
+  const savedToken = localStorage.getItem('pulse_token');
+  const savedUser = localStorage.getItem('pulse_user');
+  if (savedToken && savedUser) {
+    token = savedToken;
+    currentUser = JSON.parse(savedUser);
+    bootApp();
+  }
+})();
+</script>
+</body>
+</html>
