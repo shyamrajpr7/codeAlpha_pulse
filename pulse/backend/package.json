@@ -1,23 +1,18 @@
 {
-  "name": "ecommerce",
+  "name": "pulse-social-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Pulse Social Media App - Express.js Backend",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@seald-io/nedb": "^4.1.2",
-    "bcryptjs": "^3.0.3",
-    "body-parser": "^2.2.2",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "jsonwebtoken": "^9.0.3",
-    "uuid": "^14.0.0"
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.1.1",
+    "uuid": "^11.1.0"
   }
 }
